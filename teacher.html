@@ -42,6 +42,12 @@
     display: inline-block; padding: 4px 12px; border-radius: 999px; margin-bottom: 10px;
   }
   .hero h1 { font-family: 'Gaegu', sans-serif; font-size: 27px; margin: 0; }
+  .fullscreen-btn {
+    font-family: inherit; font-weight: 700; font-size: 13px;
+    background: rgba(255,255,255,0.6); color: #17384A;
+    border: none; border-radius: 999px; padding: 8px 15px;
+    cursor: pointer; margin-top: 14px;
+  }
 
   .card {
     background: var(--card);
@@ -87,38 +93,50 @@
     border-radius: 999px; padding: 9px 16px; cursor: pointer;
   }
   .refresh-btn:hover { border-color: var(--mint); }
-  .stat-line { font-size: 13.5px; color: var(--ink-soft); font-weight: 700; margin-bottom: 14px; }
+  .stat-line { font-size: 15px; color: var(--ink-soft); font-weight: 700; margin-bottom: 16px; }
 
-  .summary-section { margin-bottom: 18px; }
+  .summary-section { margin-bottom: 22px; }
   .summary-section h3 {
     font-family: 'Gaegu', sans-serif;
-    font-size: 17px; margin: 0 0 8px; color: var(--ink);
+    font-size: 22px; margin: 0 0 10px; color: var(--ink);
   }
-  .summary-section ul { margin: 0; padding-left: 20px; }
+  .summary-section ul { margin: 0; padding-left: 24px; }
   .summary-section li {
-    font-size: 14.5px; margin-bottom: 6px; color: #2B3A52;
+    font-size: 18px; margin-bottom: 10px; color: #2B3A52; line-height: 1.55;
   }
   .summary-box {
     background: #F7FBFF;
-    border-left: 4px solid var(--mint);
+    border-left: 5px solid var(--mint);
     border-radius: 12px;
-    padding: 18px 20px;
+    padding: 20px 24px;
   }
-  .loading { color: var(--ink-soft); font-size: 14px; }
+  .loading { color: var(--ink-soft); font-size: 15px; }
 
   .live-head { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
   .live-dot {
-    width:8px; height:8px; border-radius:50%; background: #E85A45;
+    width:9px; height:9px; border-radius:50%; background: #E85A45;
     animation: pulse 1.4s infinite;
   }
   @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-  .live-label { font-size: 12.5px; color: var(--ink-soft); font-weight:700; }
+  .live-label { font-size: 13px; color: var(--ink-soft); font-weight:700; }
 
-  .wall { columns: 3 210px; column-gap: 14px; }
-  @media (max-width: 640px) { .wall { columns: 1 210px; } }
+  .wall { columns: 2 280px; column-gap: 16px; }
+  @media (max-width: 640px) { .wall { columns: 1 240px; } }
+  .class-group { margin-bottom: 26px; }
+  .class-group:last-child { margin-bottom: 0; }
+  .class-group-title {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 19px;
+    margin: 0 0 12px;
+    color: var(--ink);
+    border-bottom: 2px dashed var(--line);
+    padding-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .class-count { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
   .note {
-    break-inside: avoid; margin-bottom: 14px; border-radius: 6px;
-    padding: 16px 14px 12px; position: relative;
+    break-inside: avoid; margin-bottom: 16px; border-radius: 8px;
+    padding: 20px 18px 15px; position: relative;
     box-shadow: 3px 5px 0 rgba(51,65,92,0.08);
   }
   .note::before {
@@ -131,25 +149,25 @@
   .note.c4 { background: var(--note5); } .note.c5 { background: var(--note6); }
   .note .note-top {
     display:flex; justify-content:space-between; align-items:center;
-    font-size: 11.5px; font-weight:700; color: rgba(51,65,92,0.7); margin-bottom: 6px;
+    font-size: 13px; font-weight:700; color: rgba(51,65,92,0.7); margin-bottom: 8px;
   }
   .note .class-tag {
     font-size: 10.5px; font-weight:700; color: rgba(51,65,92,0.55);
     margin-bottom: 4px;
   }
   .note h3 {
-    font-family: 'Gaegu', sans-serif; font-size: 16.5px; font-weight:700;
-    margin: 0 0 5px; color: #23324A;
+    font-family: 'Gaegu', sans-serif; font-size: 20px; font-weight:700;
+    margin: 0 0 7px; color: #23324A;
   }
-  .note p { margin: 0 0 8px; font-size: 13.5px; color: #2B3A52; }
+  .note p { margin: 0 0 10px; font-size: 16px; color: #2B3A52; line-height:1.5; }
   .note .note-bottom {
     display:flex; justify-content:space-between; align-items:center;
   }
-  .note .who { font-size: 11.5px; font-weight:700; color: rgba(51,65,92,0.65); }
+  .note .who { font-size: 13px; font-weight:700; color: rgba(51,65,92,0.65); }
   .del-btn {
-    font-family: inherit; font-size: 11.5px; font-weight: 700;
+    font-family: inherit; font-size: 12.5px; font-weight: 700;
     background: rgba(180,67,46,0.12); color: #B4432E;
-    border: none; border-radius: 999px; padding: 4px 10px; cursor: pointer;
+    border: none; border-radius: 999px; padding: 5px 12px; cursor: pointer;
   }
   .del-btn:hover { background: rgba(180,67,46,0.22); }
   .empty { text-align:center; color: var(--ink-soft); padding: 24px 0; grid-column: 1/-1; }
@@ -160,6 +178,8 @@
   <div class="hero">
     <span class="kicker">신남연구소 · 현장 기록 프로젝트</span>
     <h1>교사용 대시보드</h1>
+    <br>
+    <button class="fullscreen-btn" id="fullscreenBtn">🖥️ 전체화면으로 보기</button>
   </div>
 
   <div class="card">
@@ -188,7 +208,7 @@
       <h2 class="section-title" style="margin-bottom:0;">📌 실시간 담벼락</h2>
       <span class="live-label">8초마다 자동 새로고침</span>
     </div>
-    <div id="liveWall" class="wall"><div class="empty">불러오는 중...</div></div>
+    <div id="liveWall"><div class="empty">불러오는 중...</div></div>
   </div>
 </div>
 
@@ -198,6 +218,20 @@
   const NOTE_COLORS = ['c0','c1','c2','c3','c4','c5'];
 
   let savedPassword = '';
+
+  document.getElementById('fullscreenBtn').addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+      document.getElementById('fullscreenBtn').textContent = '↩️ 전체화면 나가기';
+    } else {
+      document.exitFullscreen();
+      document.getElementById('fullscreenBtn').textContent = '🖥️ 전체화면으로 보기';
+    }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    document.getElementById('fullscreenBtn').textContent =
+      document.fullscreenElement ? '↩️ 전체화면 나가기' : '🖥️ 전체화면으로 보기';
+  });
 
   function escapeHtml(str) {
     return (str || '').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -299,24 +333,18 @@
       const url = API_URL + '?action=list' + (classInfo ? '&classInfo=' + encodeURIComponent(classInfo) : '');
       const res = await fetch(url);
       const data = await res.json();
-      renderLiveWall(data.items || []);
+      renderLiveWall(data.items || [], classInfo);
     } catch (err) {
       wallEl.innerHTML = '<div class="empty">담벼락을 불러오지 못했습니다.</div>';
     }
   }
 
-  function renderLiveWall(items) {
-    const wallEl = document.getElementById('liveWall');
-    if (items.length === 0) {
-      wallEl.innerHTML = '<div class="empty">아직 붙은 포스트잇이 없어요.</div>';
-      return;
-    }
-    wallEl.innerHTML = items.map((e, i) => {
+  function notesHtml(items) {
+    return items.map((e, i) => {
       const colorCls = NOTE_COLORS[i % NOTE_COLORS.length];
       const who = [e.number ? e.number + '번' : '', e.name].filter(Boolean).join(' ');
       return `
         <div class="note ${colorCls}">
-          <div class="class-tag">${escapeHtml(e.classInfo)}</div>
           <div class="note-top"><span>${escapeHtml(e.category)}</span></div>
           <h3>${escapeHtml(e.title)}</h3>
           <p>${escapeHtml(e.content)}</p>
@@ -326,6 +354,38 @@
           </div>
         </div>`;
     }).join('');
+  }
+
+  function renderLiveWall(items, classFilter) {
+    const wallEl = document.getElementById('liveWall');
+    if (items.length === 0) {
+      wallEl.innerHTML = '<div class="empty">아직 붙은 포스트잇이 없어요.</div>';
+      return;
+    }
+
+    if (classFilter) {
+      // 특정 반만 볼 때는 그냥 하나의 담벼락으로
+      wallEl.innerHTML = `<div class="wall">${notesHtml(items)}</div>`;
+      return;
+    }
+
+    // 전체 반일 때는 반별로 묶어서 각각의 담벼락으로 표시
+    const groups = {};
+    items.forEach(it => {
+      const key = it.classInfo || '(반 미기재)';
+      (groups[key] = groups[key] || []).push(it);
+    });
+    const classNames = Object.keys(groups).sort();
+
+    wallEl.innerHTML = classNames.map(cls => `
+      <div class="class-group">
+        <div class="class-group-title">
+          <span>🧑‍🔬 ${escapeHtml(cls)}</span>
+          <span class="class-count">${groups[cls].length}장</span>
+        </div>
+        <div class="wall">${notesHtml(groups[cls])}</div>
+      </div>
+    `).join('');
   }
 
   document.getElementById('liveWall').addEventListener('click', async (e) => {
