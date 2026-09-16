@@ -98,6 +98,21 @@
   }
   .hint { font-size: 12.5px; color: var(--ink-soft); margin-top: -5px; }
 
+  .check-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .check-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 2px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: #F7FBFF;
+    cursor: pointer;
+  }
+  .check-chip input { width: auto; margin: 0; }
+  .check-chip.checked { background: var(--mint); color: #fff; border-color: var(--mint); }
+
   button.submit-btn {
     font-family: inherit;
     font-weight: 900;
@@ -277,16 +292,17 @@
       </div>
 
       <div>
-        <label for="category">상태변화 유형</label>
-        <select id="category" required>
-          <option value="" disabled selected>선택하세요</option>
-          <option value="융해">융해 (고체 → 액체) — 열에너지를 흡수해서 주위 온도가 낮아짐 ❄️</option>
-          <option value="응고">응고 (액체 → 고체) — 열에너지를 방출해서 주위 온도가 높아짐 🔥</option>
-          <option value="기화">기화 (액체 → 기체) — 열에너지를 흡수해서 주위 온도가 낮아짐 ❄️</option>
-          <option value="액화">액화 (기체 → 액체) — 열에너지를 방출해서 주위 온도가 높아짐 🔥</option>
-          <option value="승화(고체→기체)">승화 (고체 → 기체) — 열에너지를 흡수해서 주위 온도가 낮아짐 ❄️</option>
-          <option value="승화(기체→고체)">승화 (기체 → 고체) — 열에너지를 방출해서 주위 온도가 높아짐 🔥</option>
-        </select>
+        <label>상태변화 유형 (여러 개 선택 가능)</label>
+        <div class="check-group" id="categoryGroup">
+          <label class="check-chip"><input type="checkbox" value="융해"> 융해 ❄️</label>
+          <label class="check-chip"><input type="checkbox" value="응고"> 응고 🔥</label>
+          <label class="check-chip"><input type="checkbox" value="기화"> 기화 ❄️</label>
+          <label class="check-chip"><input type="checkbox" value="액화"> 액화 🔥</label>
+          <label class="check-chip"><input type="checkbox" value="승화(고체→기체)"> 승화(고체→기체) ❄️</label>
+          <label class="check-chip"><input type="checkbox" value="승화(기체→고체)"> 승화(기체→고체) 🔥</label>
+        </div>
+        <div class="hint">❄️ = 열에너지를 흡수해서 주위 온도가 낮아짐 · 🔥 = 열에너지를 방출해서 주위 온도가 높아짐<br>
+          냉장고처럼 한 가지 사물 안에서 여러 상태변화가 같이 일어난다면 여러 개를 체크하세요.</div>
       </div>
 
       <div>
@@ -333,15 +349,41 @@
 
 <script>
   // ⚠️ Apps Script 웹 앱 배포 후 생성된 /exec 주소를 아래에 붙여넣으세요.
-  const API_URL = 'https://script.google.com/macros/s/AKfycbya_RMwRf4ni_muETyWXVTJB6MacgwheHudeH-OIBGOfG__lxB6XcAXllNkvQDjTO1ZZg/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwkljLMkwED0wWT1TsNsS_uQWmOwCUEBNASx4QIkW30YZvWnFKZimYXWfJj4mvGFq-FVg/exec';
 
   const RELEASE_TYPES = new Set(['응고', '액화', '승화(기체→고체)']);
   const NOTE_COLORS = ['c0', 'c1', 'c2', 'c3', 'c4', 'c5'];
 
-  function thermalClass(category) { return RELEASE_TYPES.has(category) ? 'release' : 'absorb'; }
-  function thermalEmoji(category) { return RELEASE_TYPES.has(category) ? '🔥' : '❄️'; }
+  function categoriesOf(item) {
+    return (item.category || '').split(',').map(s => s.trim()).filter(Boolean);
+  }
+  function noteEmojis(item) {
+    return categoriesOf(item).map(c => RELEASE_TYPES.has(c) ? '🔥' : '❄️').join('');
+  }
+  function noteMatchesFilter(item, filter) {
+    if (filter === 'all') return true;
+    const cats = categoriesOf(item);
+    if (filter === 'absorb') return cats.some(c => !RELEASE_TYPES.has(c));
+    if (filter === 'release') return cats.some(c => RELEASE_TYPES.has(c));
+    return true;
+  }
   function escapeHtml(str) {
     return (str || '').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  document.querySelectorAll('#categoryGroup input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('.check-chip').classList.toggle('checked', cb.checked);
+    });
+  });
+  function getSelectedCategories() {
+    return Array.from(document.querySelectorAll('#categoryGroup input:checked')).map(cb => cb.value);
+  }
+  function resetCategoryChips() {
+    document.querySelectorAll('#categoryGroup input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      cb.closest('.check-chip').classList.remove('checked');
+    });
   }
 
   let allEntries = [];
@@ -376,7 +418,7 @@
     const countEl = document.getElementById('entryCount');
     const filtered = currentFilter === 'all'
       ? allEntries
-      : allEntries.filter(e => thermalClass(e.category) === currentFilter);
+      : allEntries.filter(e => noteMatchesFilter(e, currentFilter));
 
     countEl.textContent = filtered.length + '장';
 
@@ -390,7 +432,7 @@
       const who = [e.number ? e.number + '번' : '', e.name].filter(Boolean).join(' ');
       return `
         <div class="note ${colorCls}">
-          <div class="note-top"><span>${escapeHtml(e.category)}</span><span class="emoji">${thermalEmoji(e.category)}</span></div>
+          <div class="note-top"><span>${escapeHtml(e.category)}</span><span class="emoji">${noteEmojis(e)}</span></div>
           <h3>${escapeHtml(e.title)}</h3>
           <p>${escapeHtml(e.content)}</p>
           <div class="who">${escapeHtml(who)}</div>
@@ -420,12 +462,20 @@
     banner.textContent = '';
 
     const classKey = buildClassKey();
+    const selectedCategories = getSelectedCategories();
+
+    if (selectedCategories.length === 0) {
+      banner.classList.add('reject');
+      banner.textContent = '상태변화 유형을 하나 이상 선택해 주세요.';
+      return;
+    }
+
     const payload = {
       action: 'submit',
       classInfo: classKey,
       number: document.getElementById('number').value.trim(),
       name: document.getElementById('name').value.trim(),
-      category: document.getElementById('category').value,
+      category: selectedCategories,
       title: document.getElementById('title').value.trim(),
       content: document.getElementById('content').value.trim()
     };
@@ -445,7 +495,7 @@
         banner.textContent = '담벼락에 붙었어요! ' + (data.feedback || '');
         document.getElementById('title').value = '';
         document.getElementById('content').value = '';
-        document.getElementById('category').value = '';
+        resetCategoryChips();
         localStorage.setItem('snlab_hasSubmitted', 'true');
         localStorage.setItem('snlab_myClass', classKey);
         myClass = classKey;
