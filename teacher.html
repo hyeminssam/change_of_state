@@ -16,6 +16,8 @@
     --card: #FFFFFF;
     --coral: #FF6F59;
     --mint: #2EC4B6;
+    --note1: #FFF3B0; --note2: #FFD6E8; --note3: #C7F3DE;
+    --note4: #CFE8FF; --note5: #E7DBFF; --note6: #FFDDB3;
   }
   * { box-sizing: border-box; }
   body {
@@ -25,7 +27,7 @@
     font-family: 'Noto Sans KR', sans-serif;
     line-height: 1.7;
   }
-  .wrap { max-width: 680px; margin: 0 auto; padding: 34px 18px 90px; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 34px 18px 90px; }
 
   .hero {
     background: linear-gradient(135deg, #6FD6E8 0%, #8FE3C0 100%);
@@ -46,6 +48,11 @@
     border-radius: 20px;
     padding: 24px 22px;
     box-shadow: 0 4px 0 var(--line);
+    margin-bottom: 26px;
+  }
+  h2.section-title {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 21px; font-weight: 700; margin: 0 0 16px; color: var(--ink);
   }
 
   #gate { display: grid; gap: 12px; max-width: 320px; }
@@ -82,22 +89,77 @@
   .refresh-btn:hover { border-color: var(--mint); }
   .stat-line { font-size: 13.5px; color: var(--ink-soft); font-weight: 700; margin-bottom: 14px; }
 
-  .summary {
+  .summary-section { margin-bottom: 18px; }
+  .summary-section h3 {
+    font-family: 'Gaegu', sans-serif;
+    font-size: 17px; margin: 0 0 8px; color: var(--ink);
+  }
+  .summary-section ul { margin: 0; padding-left: 20px; }
+  .summary-section li {
+    font-size: 14.5px; margin-bottom: 6px; color: #2B3A52;
+  }
+  .summary-box {
     background: #F7FBFF;
     border-left: 4px solid var(--mint);
     border-radius: 12px;
-    padding: 20px 20px;
-    font-size: 15px;
-    white-space: pre-wrap;
+    padding: 18px 20px;
   }
   .loading { color: var(--ink-soft); font-size: 14px; }
+
+  .live-head { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+  .live-dot {
+    width:8px; height:8px; border-radius:50%; background: #E85A45;
+    animation: pulse 1.4s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  .live-label { font-size: 12.5px; color: var(--ink-soft); font-weight:700; }
+
+  .wall { columns: 3 210px; column-gap: 14px; }
+  @media (max-width: 640px) { .wall { columns: 1 210px; } }
+  .note {
+    break-inside: avoid; margin-bottom: 14px; border-radius: 6px;
+    padding: 16px 14px 12px; position: relative;
+    box-shadow: 3px 5px 0 rgba(51,65,92,0.08);
+  }
+  .note::before {
+    content: ''; position: absolute; top: -7px; left: 50%; transform: translateX(-50%);
+    width: 12px; height: 12px; border-radius: 50%; background: #E85A45;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  }
+  .note.c0 { background: var(--note1); } .note.c1 { background: var(--note2); }
+  .note.c2 { background: var(--note3); } .note.c3 { background: var(--note4); }
+  .note.c4 { background: var(--note5); } .note.c5 { background: var(--note6); }
+  .note .note-top {
+    display:flex; justify-content:space-between; align-items:center;
+    font-size: 11.5px; font-weight:700; color: rgba(51,65,92,0.7); margin-bottom: 6px;
+  }
+  .note .class-tag {
+    font-size: 10.5px; font-weight:700; color: rgba(51,65,92,0.55);
+    margin-bottom: 4px;
+  }
+  .note h3 {
+    font-family: 'Gaegu', sans-serif; font-size: 16.5px; font-weight:700;
+    margin: 0 0 5px; color: #23324A;
+  }
+  .note p { margin: 0 0 8px; font-size: 13.5px; color: #2B3A52; }
+  .note .note-bottom {
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .note .who { font-size: 11.5px; font-weight:700; color: rgba(51,65,92,0.65); }
+  .del-btn {
+    font-family: inherit; font-size: 11.5px; font-weight: 700;
+    background: rgba(180,67,46,0.12); color: #B4432E;
+    border: none; border-radius: 999px; padding: 4px 10px; cursor: pointer;
+  }
+  .del-btn:hover { background: rgba(180,67,46,0.22); }
+  .empty { text-align:center; color: var(--ink-soft); padding: 24px 0; grid-column: 1/-1; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hero">
     <span class="kicker">신남연구소 · 현장 기록 프로젝트</span>
-    <h1>교사용 수업 자료 정리</h1>
+    <h1>교사용 대시보드</h1>
   </div>
 
   <div class="card">
@@ -113,20 +175,35 @@
         <select class="class-select" id="classSelect">
           <option value="">전체 반</option>
         </select>
-        <button class="refresh-btn" id="refreshBtn">다시 분석하기</button>
+        <button class="refresh-btn" id="refreshBtn">AI 요약 다시 분석하기</button>
       </div>
       <div class="stat-line" id="statCount"></div>
-      <div class="summary" id="summaryArea"><div class="loading">Gemini가 학생 제출물을 정리하는 중입니다...</div></div>
+      <div id="summaryArea"><div class="loading">Gemini가 학생 제출물을 정리하는 중입니다...</div></div>
     </div>
+  </div>
+
+  <div class="card" id="liveCard" style="display:none;">
+    <div class="live-head">
+      <span class="live-dot"></span>
+      <h2 class="section-title" style="margin-bottom:0;">📌 실시간 담벼락</h2>
+      <span class="live-label">8초마다 자동 새로고침</span>
+    </div>
+    <div id="liveWall" class="wall"><div class="empty">불러오는 중...</div></div>
   </div>
 </div>
 
 <script>
   // ⚠️ Apps Script 웹 앱 배포 후 생성된 /exec 주소를 아래에 붙여넣으세요.
-  const API_URL = 'https://script.google.com/macros/s/AKfycbya_RMwRf4ni_muETyWXVTJB6MacgwheHudeH-OIBGOfG__lxB6XcAXllNkvQDjTO1ZZg/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwkljLMkwED0wWT1TsNsS_uQWmOwCUEBNASx4QIkW30YZvWnFKZimYXWfJj4mvGFq-FVg/exec';
+  const NOTE_COLORS = ['c0','c1','c2','c3','c4','c5'];
 
   let savedPassword = '';
 
+  function escapeHtml(str) {
+    return (str || '').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ---------- AI 요약 ----------
   async function fetchSummary(password, classInfo) {
     const res = await fetch(API_URL, {
       method: 'POST',
@@ -146,7 +223,21 @@
     populateClassSelect(data.classes, classInfo);
     document.getElementById('statCount').textContent =
       (classInfo || '전체 반') + ' · 승인된 제출물 ' + data.count + '건';
-    document.getElementById('summaryArea').textContent = data.summary || '';
+
+    const area = document.getElementById('summaryArea');
+    const sections = data.sections || [];
+    if (sections.length === 0) {
+      area.innerHTML = '<div class="summary-box">정리할 내용이 없습니다.</div>';
+      return;
+    }
+    area.innerHTML = sections.map(sec => `
+      <div class="summary-section">
+        <h3>${escapeHtml(sec.heading || '')}</h3>
+        <div class="summary-box">
+          <ul>${(sec.items || []).map(it => `<li>${escapeHtml(it)}</li>`).join('')}</ul>
+        </div>
+      </div>
+    `).join('');
   }
 
   document.getElementById('unlockBtn').addEventListener('click', async () => {
@@ -167,7 +258,10 @@
       savedPassword = pw;
       document.getElementById('gate').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
+      document.getElementById('liveCard').style.display = 'block';
       renderSummary(data, '');
+      refreshLiveWall();
+      setInterval(refreshLiveWall, 8000);
     } catch (err) {
       errorEl.textContent = '네트워크 오류가 발생했습니다.';
       errorEl.classList.add('show');
@@ -181,6 +275,7 @@
     document.getElementById('summaryArea').innerHTML = '<div class="loading">Gemini가 정리하는 중입니다...</div>';
     const data = await fetchSummary(savedPassword, e.target.value);
     if (data.success) renderSummary(data, e.target.value);
+    refreshLiveWall();
   });
 
   document.getElementById('refreshBtn').addEventListener('click', async () => {
@@ -193,6 +288,69 @@
       if (data.success) renderSummary(data, classInfo);
     } finally {
       btn.disabled = false;
+    }
+  });
+
+  // ---------- 실시간 담벼락 ----------
+  async function refreshLiveWall() {
+    const classInfo = document.getElementById('classSelect').value;
+    const wallEl = document.getElementById('liveWall');
+    try {
+      const url = API_URL + '?action=list' + (classInfo ? '&classInfo=' + encodeURIComponent(classInfo) : '');
+      const res = await fetch(url);
+      const data = await res.json();
+      renderLiveWall(data.items || []);
+    } catch (err) {
+      wallEl.innerHTML = '<div class="empty">담벼락을 불러오지 못했습니다.</div>';
+    }
+  }
+
+  function renderLiveWall(items) {
+    const wallEl = document.getElementById('liveWall');
+    if (items.length === 0) {
+      wallEl.innerHTML = '<div class="empty">아직 붙은 포스트잇이 없어요.</div>';
+      return;
+    }
+    wallEl.innerHTML = items.map((e, i) => {
+      const colorCls = NOTE_COLORS[i % NOTE_COLORS.length];
+      const who = [e.number ? e.number + '번' : '', e.name].filter(Boolean).join(' ');
+      return `
+        <div class="note ${colorCls}">
+          <div class="class-tag">${escapeHtml(e.classInfo)}</div>
+          <div class="note-top"><span>${escapeHtml(e.category)}</span></div>
+          <h3>${escapeHtml(e.title)}</h3>
+          <p>${escapeHtml(e.content)}</p>
+          <div class="note-bottom">
+            <span class="who">${escapeHtml(who)}</span>
+            <button class="del-btn" data-id="${e.id}">삭제</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  document.getElementById('liveWall').addEventListener('click', async (e) => {
+    if (!e.target.classList.contains('del-btn')) return;
+    if (!confirm('이 포스트잇을 삭제할까요? 되돌릴 수 없어요.')) return;
+    const id = e.target.dataset.id;
+    e.target.disabled = true;
+    e.target.textContent = '삭제 중...';
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'delete', password: savedPassword, id: id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        refreshLiveWall();
+      } else {
+        alert(data.message || '삭제하지 못했습니다.');
+        e.target.disabled = false;
+        e.target.textContent = '삭제';
+      }
+    } catch (err) {
+      alert('네트워크 오류로 삭제하지 못했습니다.');
+      e.target.disabled = false;
+      e.target.textContent = '삭제';
     }
   });
 </script>
