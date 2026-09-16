@@ -280,12 +280,12 @@
         <label for="category">상태변화 유형</label>
         <select id="category" required>
           <option value="" disabled selected>선택하세요</option>
-          <option value="융해">융해 (고체 → 액체, 흡열 ❄️)</option>
-          <option value="응고">응고 (액체 → 고체, 발열 🔥)</option>
-          <option value="기화">기화 (액체 → 기체, 흡열 ❄️)</option>
-          <option value="액화">액화 (기체 → 액체, 발열 🔥)</option>
-          <option value="승화(고체→기체)">승화 (고체 → 기체, 흡열 ❄️)</option>
-          <option value="승화(기체→고체)">승화 (기체 → 고체, 발열 🔥)</option>
+          <option value="융해">융해 (고체 → 액체) — 열에너지를 흡수해서 주위 온도가 낮아짐 ❄️</option>
+          <option value="응고">응고 (액체 → 고체) — 열에너지를 방출해서 주위 온도가 높아짐 🔥</option>
+          <option value="기화">기화 (액체 → 기체) — 열에너지를 흡수해서 주위 온도가 낮아짐 ❄️</option>
+          <option value="액화">액화 (기체 → 액체) — 열에너지를 방출해서 주위 온도가 높아짐 🔥</option>
+          <option value="승화(고체→기체)">승화 (고체 → 기체) — 열에너지를 흡수해서 주위 온도가 낮아짐 ❄️</option>
+          <option value="승화(기체→고체)">승화 (기체 → 고체) — 열에너지를 방출해서 주위 온도가 높아짐 🔥</option>
         </select>
       </div>
 
@@ -312,8 +312,8 @@
     </div>
     <div class="tabs" id="tabs" style="display:none;">
       <button class="tab active" data-filter="all">전체</button>
-      <button class="tab" data-filter="absorb">❄️ 흡열</button>
-      <button class="tab" data-filter="release">🔥 발열</button>
+      <button class="tab" data-filter="absorb">❄️ 온도가 낮아짐</button>
+      <button class="tab" data-filter="release">🔥 온도가 높아짐</button>
     </div>
 
     <div id="lockedBox" class="locked-box">
@@ -333,7 +333,7 @@
 
 <script>
   // ⚠️ Apps Script 웹 앱 배포 후 생성된 /exec 주소를 아래에 붙여넣으세요.
-  const API_URL = 'https://script.google.com/macros/s/AKfycbwunt1Q5HhEtftXb8T5kV1CmZCVJjxOeZtA6m_vD0XsDwpts8TSf-h2LJ_H2nWx1qHSSg/exec';
+  const API_URL = 'https://script.google.com/macros/library/d/14SlFwdp07yHZx6kaGvS6L-V9G6guZEiy8wwqL6HGdeVAR6J3jqc_BWMR/1';
 
   const RELEASE_TYPES = new Set(['응고', '액화', '승화(기체→고체)']);
   const NOTE_COLORS = ['c0', 'c1', 'c2', 'c3', 'c4', 'c5'];
