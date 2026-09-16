@@ -132,7 +132,17 @@
     border-bottom: 2px dashed var(--line);
     padding-bottom: 8px;
     display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    list-style: none;
   }
+  .class-group-title::-webkit-details-marker { display: none; }
+  .class-group-title .chevron {
+    display: inline-block;
+    margin-right: 4px;
+    transition: transform 0.15s ease;
+  }
+  .class-group[open] > .class-group-title .chevron { transform: rotate(90deg); }
+  .class-group:not([open]) { margin-bottom: 10px; }
   .class-count { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
   .note {
     break-inside: avoid; margin-bottom: 16px; border-radius: 8px;
@@ -214,7 +224,7 @@
 
 <script>
   // ⚠️ Apps Script 웹 앱 배포 후 생성된 /exec 주소를 아래에 붙여넣으세요.
-  const API_URL = 'https://script.google.com/macros/s/AKfycbwkljLMkwED0wWT1TsNsS_uQWmOwCUEBNASx4QIkW30YZvWnFKZimYXWfJj4mvGFq-FVg/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwhnpPmupuVrAxch0LRoShUOQp4CumEBe1aeADVc0gkj2PMNxtgSPcfE2OrDP1mffR-pA/exec';
   const NOTE_COLORS = ['c0','c1','c2','c3','c4','c5'];
 
   let savedPassword = '';
@@ -253,25 +263,44 @@
     sel.value = selected || '';
   }
 
+  const RELEASE_TYPES = new Set(['응고', '액화', '승화(기체→고체)']);
+  function categoryEmoji(cat) { return RELEASE_TYPES.has((cat || '').trim()) ? '🔥' : '❄️'; }
+
   function renderSummary(data, classInfo) {
     populateClassSelect(data.classes, classInfo);
     document.getElementById('statCount').textContent =
       (classInfo || '전체 반') + ' · 승인된 제출물 ' + data.count + '건';
 
     const area = document.getElementById('summaryArea');
-    const sections = data.sections || [];
-    if (sections.length === 0) {
-      area.innerHTML = '<div class="summary-box">정리할 내용이 없습니다.</div>';
+    const groups = data.categoryGroups || [];
+    const misconceptions = data.misconceptions || [];
+
+    if (groups.length === 0 && misconceptions.length === 0) {
+      area.innerHTML = '<div class="summary-box">아직 정리할 내용이 없습니다.</div>';
       return;
     }
-    area.innerHTML = sections.map(sec => `
+
+    let html = groups.map(g => `
       <div class="summary-section">
-        <h3>${escapeHtml(sec.heading || '')}</h3>
+        <h3>${categoryEmoji(g.category)} ${escapeHtml(g.category || '')}</h3>
         <div class="summary-box">
-          <ul>${(sec.items || []).map(it => `<li>${escapeHtml(it)}</li>`).join('')}</ul>
+          <ul>${(g.items || []).map(it => `<li>${escapeHtml(it)}</li>`).join('')}</ul>
         </div>
       </div>
     `).join('');
+
+    if (misconceptions.length > 0) {
+      html += `
+        <div class="summary-section">
+          <h3>🤔 자주 나타난 오개념·애매한 설명</h3>
+          <div class="summary-box">
+            <ul>${misconceptions.map(it => `<li>${escapeHtml(it)}</li>`).join('')}</ul>
+          </div>
+        </div>
+      `;
+    }
+
+    area.innerHTML = html;
   }
 
   document.getElementById('unlockBtn').addEventListener('click', async () => {
@@ -356,6 +385,8 @@
     }).join('');
   }
 
+  const groupOpenState = {};
+
   function renderLiveWall(items, classFilter) {
     const wallEl = document.getElementById('liveWall');
     if (items.length === 0) {
@@ -369,7 +400,7 @@
       return;
     }
 
-    // 전체 반일 때는 반별로 묶어서 각각의 담벼락으로 표시
+    // 전체 반일 때는 반별로 묶어서 열고 닫을 수 있는 담벼락으로 표시
     const groups = {};
     items.forEach(it => {
       const key = it.classInfo || '(반 미기재)';
@@ -377,15 +408,22 @@
     });
     const classNames = Object.keys(groups).sort();
 
-    wallEl.innerHTML = classNames.map(cls => `
-      <div class="class-group">
-        <div class="class-group-title">
-          <span>🧑‍🔬 ${escapeHtml(cls)}</span>
+    wallEl.innerHTML = classNames.map(cls => {
+      const isOpen = groupOpenState.hasOwnProperty(cls) ? groupOpenState[cls] : true;
+      return `
+      <details class="class-group" data-class="${escapeHtml(cls)}" ${isOpen ? 'open' : ''}>
+        <summary class="class-group-title">
+          <span><span class="chevron">▶</span> 🧑‍🔬 ${escapeHtml(cls)}</span>
           <span class="class-count">${groups[cls].length}장</span>
-        </div>
+        </summary>
         <div class="wall">${notesHtml(groups[cls])}</div>
-      </div>
-    `).join('');
+      </details>
+    `;
+    }).join('');
+
+    wallEl.querySelectorAll('details.class-group').forEach(d => {
+      d.addEventListener('toggle', () => { groupOpenState[d.dataset.class] = d.open; });
+    });
   }
 
   document.getElementById('liveWall').addEventListener('click', async (e) => {
